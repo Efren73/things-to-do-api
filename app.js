@@ -7,6 +7,8 @@ var cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var tourOperatorRouter = require('./routes/tourOperator')
+var admin = require('./routes/admin')
 
 var app = express();
 app.use(cors())
@@ -18,6 +20,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/tour-operator', tourOperatorRouter)
+app.use('/admin', admin)
 
 app.use('*', (req, res, next) => {
     res.status(404).send("Sorry can't find that!")
