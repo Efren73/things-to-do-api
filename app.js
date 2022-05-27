@@ -23,9 +23,12 @@ app.use('/users', usersRouter);
 app.use('/tour-operator', tourOperatorRouter)
 app.use('/admin', admin)
 
-app.use('*', (req, res, next) => {
-    res.status(404).send("Sorry can't find that!")
-})
+app.use('*', (err, req, res, next) => {
+    return res.status(500).json({
+        "name": err.name,
+        "message": `${err.message}, ${err.original ? err.original : ':('}`,
+    })
+});
 
 app.use(function (err, req, res, next) {
     console.error(err.stack)
