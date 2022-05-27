@@ -14,7 +14,9 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
   }
   else{
     snapshot.forEach((doc) => {
-      console.log(doc.id, "=>", doc.data());
+      if(!doc.data().deletedAt){
+        console.log(doc.id, "=>", doc.data());
+      }
     });
     res.send('Well Done')
   }
@@ -31,6 +33,21 @@ router.get('/one-tour/:idTour', async function(req, res, next) {
     console.log('Document data:', doc.data());
   }
 res.send(doc.data());
+});
+
+//Get tour operator info
+router.get('/info/:idTourOperator', async function(req, res, next){
+  const {idTourOperator} = req.params;
+  const tourOperatorRef = db.collection("TOUR_OPERATOR").doc(idTourOperator)
+  const doc =await tourOperatorRef.get();
+  if(!doc.exists){
+    console.log("No doc")
+    res.send('No document')
+  }
+  else{
+    console.log(doc.id, "=", doc.data())
+    res.send('Well Done')
+  }
 });
 
 /* CREATE TOUR -------------------------------------------------- */
