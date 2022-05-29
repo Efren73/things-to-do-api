@@ -13,12 +13,15 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
     res.send("No doc")
   }
   else{
-    snapshot.forEach((doc) => {
-      if(!doc.data().deletedAt){
+    let x =[]
+    snapshot.forEach((doc, index) => {
+      if(!doc.data().hasOwnProperty("deletedAt")){
         console.log(doc.id, "=>", doc.data());
+        x[index] = doc.data()
       }
     });
-    res.send('Well Done')
+    console.log(x)
+    res.send("Buena")
   }
 });
 
@@ -46,7 +49,7 @@ router.get('/info/:idTourOperator', async function(req, res, next){
   }
   else{
     console.log(doc.id, "=", doc.data())
-    res.send('Well Done')
+    res.send(doc.data())
   }
 });
 
