@@ -112,8 +112,8 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
       const tour = await db.collection('TOUR').doc(idTour).update(body);
 
       // Actualiza la fecha de actualización
-      const updateAt = await tourRef.update({
-        updateAt: admin.firestore.FieldValue.serverTimestamp()
+      const updatedAt = await tourRef.update({
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
       return res.status(200).json({
@@ -144,8 +144,8 @@ router.put('/update-tour-operator/:idTourOperator', async (req, res, next) => {
       const tour = await db.collection('TOUR_OPERATOR').doc(idTourOperator).update(body);
 
       // Actualiza la fecha de actualización
-      const updateAt = await tourOperatorRef.update({
-        updateAt: admin.firestore.FieldValue.serverTimestamp()
+      const updatedAt = await tourOperatorRef.update({
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
       return res.status(200).json({

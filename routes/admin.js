@@ -71,8 +71,8 @@ router.put('/update-admin/:idAdmin', async (req, res, next) => {
       const tour = await db.collection('ADMIN').doc(idAdmin).update(body);
 
       // Actualiza la fecha de actualización
-      const updateAt = await adminRef.update({
-        updateAt: admin.firestore.FieldValue.serverTimestamp()
+      const updatedAt = await adminRef.update({
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
       return res.status(200).json({
