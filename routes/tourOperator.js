@@ -13,15 +13,9 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
     res.send("No doc")
   }
   else{
-    let x =[]
-    snapshot.forEach((doc, index) => {
-      if(!doc.data().hasOwnProperty("deletedAt")){
-        console.log(doc.id, "=>", doc.data());
-        x[index] = doc.data()
-      }
-    });
-    console.log(x)
-    res.send("Buena")
+    const list = snapshot.docs
+    console.log(list)
+    res.send(snapshot.docs)
   }
 });
 
