@@ -52,4 +52,36 @@ router.get('/info/:idAdmin', async function(req, res, next){
   }
 });
 
+/* UPDATE ADMIN ------------------------------------------------ */
+router.put('/update-admin/:idAdmin', async (req, res, next) => {
+  const { idAdmin } = req.params;
+  const { body } = req;
+  
+  try {
+    // Confirmamos que existe
+    const adminRef = db.collection('ADMIN').doc(idAdmin);
+    const doc = await adminRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({
+        name: "Not found",
+        message: "Sorry, el admin que buscas no existe"
+      })
+    } else {
+      // Actualiza el documento
+      const tour = await db.collection('ADMIN').doc(idAdmin).update(body);
+
+      // Actualiza la fecha de actualización
+      const updatedAt = await adminRef.update({
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      return res.status(200).json({
+        name: "Edicion exitosa",
+        message: "Se realizo la edición del admin exitosamente"
+      });
+  }} catch(err) {
+    next(err);
+  }
+});
+
 module.exports = router;
