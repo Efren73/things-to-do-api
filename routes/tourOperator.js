@@ -15,7 +15,7 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
   else{
     const list = snapshot.docs
     console.log(list)
-    res.send(snapshot.docs)
+    res.send(list)
   }
 });
 
