@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('./llave.json');
+const env = process.env.SERVICE_ACCOUNT_KEY
+const serviceAccount = JSON.parse(env);
 
 module.exports = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
