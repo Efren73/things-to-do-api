@@ -113,10 +113,10 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
-      return res.status(200).json({
-        name: "Edicion exitosa",
-        message: "Se realizo la edición del tour exitosamente"
-      });
+      const tourRef = db.collection('TOUR').doc(idTour);
+      const doc2 = await tourRef.get();
+
+      return res.send(doc2);
   }} catch(err) {
     next(err);
   }
