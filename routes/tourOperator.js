@@ -14,8 +14,12 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
   }
   else{
     const list = snapshot.docs
-    console.log(list)
-    res.send(list)
+    let array = [];
+    list.map((element) =>{
+      array.push({id: element.id, ...element.data()})
+    })
+    
+    res.send(array)
   }
 });
 
