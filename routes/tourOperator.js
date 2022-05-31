@@ -16,9 +16,9 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
     const list = snapshot.docs
     let array = [];
     list.map((element) =>{
-      array.push(element.data())
-      console.log(element.id, "=>", element.data())
+      array.push({id: element.id, ...element.data()})
     })
+    
     res.send(array)
   }
 });
