@@ -117,10 +117,10 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
-      const tourRef = db.collection('TOUR').doc(idTour);
-      const doc2 = await tourRef.get();
+      const tourRef2 = db.collection('TOUR').doc(idTour);
+      const doc2 = await tourRef2.get();
 
-      return res.send(doc2);
+      return res.send(doc2.data());
   }} catch(err) {
     next(err);
   }
