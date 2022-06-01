@@ -91,7 +91,7 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+}); 
 
 /* CREATE TOUR OPERADOR --------------------------------------- */
 router.post("/create-tour-operator", async(req, res, next) => {
