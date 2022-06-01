@@ -52,8 +52,27 @@ router.get('/info/:idTourOperator', async function(req, res, next){
 });
 
 /* CREATE TOUR --------------------------------------- */
-router.post("/create-tour", async(req, res, next) => {
-  const data = req.body;
+router.post("/create-tour/:idTourOperator", async(req, res, next) => {
+  
+  const {idTourOperator} = req.params;
+  const tourOperatorRef = db.collection("TOUR_OPERATOR").doc(idTourOperator)
+  const doc =await tourOperatorRef.get();
+  if(!doc.exists){
+    console.log("No doc")
+    res.send('No document of tour operator')
+  }
+  else{
+    console.log("tour operador extraido con exito")
+  }
+
+  const data = {
+    tourOperator: doc.id,
+    tourOperatorCountry: doc.data().country,
+    tourOperatorName: doc.data().fullName,
+    basicInformation: {
+      tourName: ''
+    }
+  };
 
   try {
     // Agrega nuevo documento y deja que firestore cree la clave
@@ -64,10 +83,11 @@ router.post("/create-tour", async(req, res, next) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    return res.status(201).json({
-      name: "Creación exitosa",
-      message: "Se realizo la creación del tour exitosamente"
-    });
+    const newTourId = {
+      id: newTour.id
+    }
+    console.log("Hello", typeof(newTour.id))
+    return res.send(newTourId);
   } catch (error) {
     next(error);
   }
