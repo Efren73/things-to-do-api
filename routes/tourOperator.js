@@ -71,7 +71,7 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
     tourOperatorCountry: doc.data().country,
     tourOperatorName: doc.data().fullName,
     basicInformation: {
-      tourName: 'Experience name',
+      tourName: '',
       duration: {
         hours: '',
         minutes: ''
