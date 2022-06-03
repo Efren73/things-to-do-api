@@ -7,7 +7,7 @@ const db = require('../firebase')
 router.get('/all-tours/:idTourOperator', async (req, res, next) => {
   const {idTourOperator} = req.params;
   const toursRef = db.collection("TOUR");
-  const snapshot = await toursRef.where('tourOperator', '==', idTourOperator).get();
+  const snapshot = await toursRef.where('tourOperator', '==', idTourOperator).where('deletedAt', '==', null).get();
   if (snapshot.empty) {
     console.log("No matching documents.");
     res.send("No doc")
@@ -16,7 +16,6 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
     const list = snapshot.docs
     let array = [];
     list.map((element) =>{
-      if(!element.data().deletedAt)
         array.push({id: element.id, ...element.data()})
     })
 
@@ -76,7 +75,8 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
         hours: '',
         minutes: ''
       }
-    }
+    },
+    deletedAt: null
   };
 
   try {
@@ -184,37 +184,6 @@ router.put("/delete-tour/:idTour", async (req, res, next) => {
     next(err);
   }
 })
-
-router.put('/update-tour/:idTour', async (req, res, next) => {
-  const { idTour } = req.params;
-  const { body } = req;
-  
-  try {
-    // Confirmamos que existe
-    const tourRef = db.collection('TOUR').doc(idTour);
-    const doc = await tourRef.get();
-    if (!doc.exists) {
-      return res.status(404).json({
-        name: "Not found",
-        message: "Sorry, el tour que buscas no existe"
-      })
-    } else {
-      // Actualiza el documento
-      const tour = await db.collection('TOUR').doc(idTour).update(body);
-
-      // Actualiza la fecha de actualización
-      const updatedAt = await tourRef.update({
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
-      });
-
-      const tourRef2 = db.collection('TOUR').doc(idTour);
-      const doc2 = await tourRef2.get();
-
-      return res.send(doc2.data());
-  }} catch(err) {
-    next(err);
-  }
-});
 
 /* UPDATE TOUR OPERADOR ------------------------------------------------------- */
 router.put('/update-tour-operator/:idTourOperator', async (req, res, next) => {
