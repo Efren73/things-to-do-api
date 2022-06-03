@@ -76,17 +76,13 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
         minutes: ''
       }
     },
-    deletedAt: null
+    deletedAt: null,
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
   };
 
   try {
     // Agrega nuevo documento y deja que firestore cree la clave
     const newTour = await db.collection('TOUR').add(data);
-
-    // Actualiza la fecha de creación
-    const createdAt = await newTour.update({
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    });
 
     const newTourId = {
       id: newTour.id
