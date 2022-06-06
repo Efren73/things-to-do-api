@@ -16,7 +16,7 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
     const list = snapshot.docs
     let array = [];
     list.map((element) =>{
-      let size = 0;
+    let size = 0;
     document = element.data()
     document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
     document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
