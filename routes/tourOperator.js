@@ -140,8 +140,11 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
+      const tourRef2 = db.collection('TOUR').doc(idTour);
+      const doc2 = await tourRef2.get();
+
       let size = 0;
-      document = element.data()
+      document = doc2.data()
       document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
       document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
       document.childrenPolicy !== undefined ? size += 1 : size;
@@ -195,9 +198,10 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
         percentage: percentage
       });
 
-      const tourRef2 = db.collection('TOUR').doc(idTour);
-      const doc2 = await tourRef2.get();
-      return res.send(doc2.data());
+      const tourRef3 = db.collection('TOUR').doc(idTour);
+      const doc3 = await tourRef2.get();
+
+      return res.send(doc3.data());
   }} catch(err) {
     next(err);
   }
