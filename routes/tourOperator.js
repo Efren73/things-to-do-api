@@ -16,60 +16,7 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
     const list = snapshot.docs
     let array = [];
     list.map((element) =>{
-    let size = 0;
-    document = element.data()
-    document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
-    document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
-
-    document.childrenPolicy !== undefined ? size += 1 : size;
-    document.cancellationPolicy !== undefined ? size += 1 : size;
-
-    if(document.accessibility !== undefined){
-      if(document.accessibility.assistance !== undefined){
-        document.accessibility.assistance.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.transportation !== undefined){
-        document.accessibility.transportation.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.places !== undefined){
-        document.accessibility.places.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.restrooms !== undefined){
-        document.accessibility.restrooms.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.equipment !== undefined){
-        document.accessibility.equipment.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-    }
-    
-    console.log("Final size", size)
-
-    const percentage = (size / 42) *100;
-        array.push({id: element.id, percentage: percentage, ...element.data()})
+        array.push({id: element.id, ...element.data()})
     })
 
     res.send(array)
@@ -84,62 +31,8 @@ router.get('/one-tour/:idTour', async function(req, res, next) {
   if (!doc.exists) {
     console.log('No such document!');
   } else {
-    let size = 0;
-    document = doc.data()
-    document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
-    document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
-
-    document.childrenPolicy !== undefined ? size += 1 : size;
-    document.cancellationPolicy !== undefined ? size += 1 : size;
-
-    if(document.accessibility !== undefined){
-      if(document.accessibility.assistance !== undefined){
-        document.accessibility.assistance.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.transportation !== undefined){
-        document.accessibility.transportation.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.places !== undefined){
-        document.accessibility.places.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.restrooms !== undefined){
-        document.accessibility.restrooms.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-  
-      if(document.accessibility.equipment !== undefined){
-        document.accessibility.equipment.map((value)=>{
-          if(value.answer != ""){
-            size += 1;
-          }
-        })
-      }
-    }
-    
-    console.log("Final size", size)
-
-    const percentage = (size / 42) *100;
-    console.log(percentage)
-    //console.log('Document data:', doc.data());
-    res.send({percentage: percentage, ...doc.data()});
+    console.log('Document data:', doc.data());
+    res.send(doc.data());
   }
 });
 
@@ -184,7 +77,9 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
       }
     },
     deletedAt: null,
-    createdAt: admin.firestore.FieldValue.serverTimestamp()
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    percentage: 0,
+    completedTour: false,
   };
 
   try {
@@ -245,9 +140,63 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
+      let size = 0;
+      document = element.data()
+      document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
+      document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
+      document.childrenPolicy !== undefined ? size += 1 : size;
+      document.cancellationPolicy !== undefined ? size += 1 : size;
+      if(document.accessibility !== undefined){
+        if(document.accessibility.assistance !== undefined){
+          document.accessibility.assistance.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.transportation !== undefined){
+          document.accessibility.transportation.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.places !== undefined){
+          document.accessibility.places.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.restrooms !== undefined){
+          document.accessibility.restrooms.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.equipment !== undefined){
+          document.accessibility.equipment.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+      }
+      
+      console.log("Final size", size)
+      const percentage = (size / 42) *100;
+
+      const changePercentage = await tourRef.update({
+        percentage: percentage
+      });
+
       const tourRef2 = db.collection('TOUR').doc(idTour);
       const doc2 = await tourRef2.get();
-
       return res.send(doc2.data());
   }} catch(err) {
     next(err);
