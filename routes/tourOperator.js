@@ -192,7 +192,7 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
       }
       
       console.log("Final size", size)
-      const percentage = (size / 42) *100;
+      const percentage = parseInt((size / 42) *100);
 
       const changePercentage = await tourRef.update({
         percentage: percentage
