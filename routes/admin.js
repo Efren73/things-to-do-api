@@ -6,19 +6,23 @@ const db = require('../firebase')
 
 //Get all tours that exists
 router.get('/principal', async function(req, res, next) {
-  const toursRef = db.collection('TOUR');
-  const snapshot = await toursRef.get()
 
+
+  const toursRef = db.collection("TOUR");
+  const snapshot = await toursRef.where('deletedAt', '==', null).get();
   if (snapshot.empty) {
-    console.log("No matching documents.");
-    res.send("No doc")
+    res.status(404).json({
+      name: "Not found",
+      message: "There are not existing tours"
+    })
   }
   else{
-    snapshot.forEach((doc) => {
-      if(!doc.data().deletedAt)
-      console.log(doc.id, "=>", doc.data());
-    });
-    res.send('Well Done')
+    const list = snapshot.docs
+    let array = [];
+    list.map((element) =>{
+        array.push({id: element.id, ...element.data()})
+    })
+    res.status(200).json(array)
   }
 });
 
@@ -28,12 +32,13 @@ router.get('/one-tour/:idTour', async (req, res, next) =>{
   const tourRef = db.collection('TOUR').doc(idTour)
   const doc = await tourRef.get();
   if(!doc.exists){
-    console.log("No doc")
-    res.send('No document')
+    res.status(404).json({
+      name: "Not found",
+      message: "Sorry, the tour doesn't exists"
+    })
   }
   else{
-    console.log(doc.id, "=", doc.data())
-    res.send('Well Done')
+    res.status(200).json(doc.data())
   }
 })
 
@@ -43,12 +48,13 @@ router.get('/info/:idAdmin', async function(req, res, next){
   const adminRef = db.collection("ADMIN").doc(idAdmin)
   const doc =await adminRef.get();
   if(!doc.exists){
-    console.log("No doc")
-    res.send('No document')
+    res.status(404).json({
+      name: "Not found",
+      message: "Sorry, the admin doesn't exists"
+    })
   }
   else{
-    console.log(doc.id, "=", doc.data())
-    res.send('Well Done')
+    res.status(200).json(doc.data())
   }
 });
 

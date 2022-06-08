@@ -7,7 +7,7 @@ const db = require('../firebase')
 router.get('/all-tours/:idTourOperator', async (req, res, next) => {
   const {idTourOperator} = req.params;
   const toursRef = db.collection("TOUR");
-  const snapshot = await toursRef.where('tourOperator', '==', idTourOperator).get();
+  const snapshot = await toursRef.where('tourOperator', '==', idTourOperator).where('deletedAt', '==', null).get();
   if (snapshot.empty) {
     console.log("No matching documents.");
     res.send("No doc")
@@ -16,7 +16,6 @@ router.get('/all-tours/:idTourOperator', async (req, res, next) => {
     const list = snapshot.docs
     let array = [];
     list.map((element) =>{
-      if(!element.data().deletedAt)
         array.push({id: element.id, ...element.data()})
     })
 
@@ -71,22 +70,21 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
     tourOperatorCountry: doc.data().country,
     tourOperatorName: doc.data().fullName,
     basicInformation: {
-      tourName: '',
+      tourName: 'Experience name',
       duration: {
         hours: '',
         minutes: ''
       }
-    }
+    },
+    deletedAt: null,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    percentage: 0,
+    completedTour: false,
   };
 
   try {
     // Agrega nuevo documento y deja que firestore cree la clave
     const newTour = await db.collection('TOUR').add(data);
-
-    // Actualiza la fecha de creación
-    const createdAt = await newTour.update({
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    });
 
     const newTourId = {
       id: newTour.id
@@ -145,7 +143,65 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
       const tourRef2 = db.collection('TOUR').doc(idTour);
       const doc2 = await tourRef2.get();
 
-      return res.send(doc2.data());
+      let size = 0;
+      document = doc2.data()
+      document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
+      document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
+      document.childrenPolicy !== undefined ? size += 1 : size;
+      document.cancellationPolicy !== undefined ? size += 1 : size;
+      if(document.accessibility !== undefined){
+        if(document.accessibility.assistance !== undefined){
+          document.accessibility.assistance.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.transportation !== undefined){
+          document.accessibility.transportation.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.places !== undefined){
+          document.accessibility.places.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.restrooms !== undefined){
+          document.accessibility.restrooms.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+    
+        if(document.accessibility.equipment !== undefined){
+          document.accessibility.equipment.map((value)=>{
+            if(value.answer != ""){
+              size += 1;
+            }
+          })
+        }
+      }
+      
+      console.log("Final size", size)
+      const percentage = parseInt((size / 42) *100);
+
+      const changePercentage = await tourRef.update({
+        percentage: percentage
+      });
+
+      const tourRef3 = db.collection('TOUR').doc(idTour);
+      const doc3 = await tourRef2.get();
+
+      return res.send(doc3.data());
   }} catch(err) {
     next(err);
   }
@@ -184,39 +240,6 @@ router.put("/delete-tour/:idTour", async (req, res, next) => {
     next(err);
   }
 })
-
-
-/* UPDATE TOUR ----------------------------------------------- */
-router.put('/update-tour/:idTour', async (req, res, next) => {
-  const { idTour } = req.params;
-  const { body } = req;
-  
-  try {
-    // Confirmamos que existe
-    const tourRef = db.collection('TOUR').doc(idTour);
-    const doc = await tourRef.get();
-    if (!doc.exists) {
-      return res.status(404).json({
-        name: "Not found",
-        message: "Sorry, el tour que buscas no existe"
-      })
-    } else {
-      // Actualiza el documento
-      const tour = await db.collection('TOUR').doc(idTour).update(body);
-
-      // Actualiza la fecha de actualización
-      const updatedAt = await tourRef.update({
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
-      });
-
-      const tourRef2 = db.collection('TOUR').doc(idTour);
-      const doc2 = await tourRef2.get();
-
-      return res.send(doc2.data());
-  }} catch(err) {
-    next(err);
-  }
-});
 
 /* UPDATE TOUR OPERADOR ------------------------------------------------------- */
 router.put('/update-tour-operator/:idTourOperator', async (req, res, next) => {
