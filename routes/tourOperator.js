@@ -56,12 +56,11 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
   
   const {idTourOperator} = req.params;
   const tourOperatorRef = db.collection("TOUR_OPERATOR").doc(idTourOperator)
-  const doc =await tourOperatorRef.get();
+  const doc = await tourOperatorRef.get();
   if(!doc.exists){
     console.log("No doc")
     res.send('No document of tour operator')
-  }
-  else{
+  } else {
     console.log("tour operador extraido con exito")
   }
 
@@ -78,6 +77,7 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
     },
     deletedAt: null,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updateAt: null,
     percentage: 0,
     tourCompleted: false,
   };
@@ -98,15 +98,15 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
 
 /* CREATE TOUR OPERADOR --------------------------------------- */
 router.post("/create-tour-operator", async(req, res, next) => {
-  const data = req.body; 
+  const data = {
+    ...req.body,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: null,
+  };
+
   try {
     // Agrega nuevo documento y deja que firestore cree la clave
     const newTour = await db.collection('TOUR_OPERATOR').add(data);
-
-    // Actualiza la fecha de creación
-    const createdAt = await newTour.update({
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    });
     
     return res.status(201).json({
       name: "Creación exitosa",
