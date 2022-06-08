@@ -7,7 +7,7 @@ const db = require('../firebase')
 router.get('/all-tours/:idTourOperator', async (req, res, next) => {
   const {idTourOperator} = req.params;
   const toursRef = db.collection("TOUR");
-  const snapshot = await toursRef.where('tourOperator', '==', idTourOperator).where('deletedAt', '==', null).get();
+  const snapshot = await toursRef.where('tourOperator', '==', idTourOperator).where('deletedAt', '==', null).where('tourCompleted', "==", false).get();
   if (snapshot.empty) {
     console.log("No matching documents.");
     res.send("No doc")
@@ -79,7 +79,7 @@ router.post("/create-tour/:idTourOperator", async(req, res, next) => {
     deletedAt: null,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     percentage: 0,
-    completedTour: false,
+    tourCompleted: false,
   };
 
   try {
@@ -272,5 +272,36 @@ router.put('/update-tour-operator/:idTourOperator', async (req, res, next) => {
     next(err);
   }
 });
+
+//COMPLETE A TOUR
+router.put("/finish-tour/:idTour", async (req, res, next) => {
+  const { idTour } = req.params;
+  const { body } = req;
+  
+  try {
+    // Confirmamos que existe
+    const tourRef = db.collection('TOUR').doc(idTour);
+    const doc = await tourRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({
+        name: "Not found",
+        message: "Sorry, el tour que buscas no existe"
+      })
+    } else {
+
+      // Actualiza la fecha de actualización
+      const finish = await tourRef.update({
+        ...body,
+        tourCompleted: true
+      }
+      );
+
+      const tourRef2 = db.collection('TOUR').doc(idTour);
+      const doc2 = await tourRef2.get();
+      return res.send(doc2.data());
+  }} catch(err) {
+    next(err);
+  }
+})
 
 module.exports = router;

@@ -90,4 +90,25 @@ router.put('/update-admin/:idAdmin', async (req, res, next) => {
   }
 });
 
+//FILTER TO ONLY ACCESS TO COMPLETED TOURS
+router.get('/completed-tours', async function(req, res, next) {
+  const toursRef = db.collection("TOUR");
+  const snapshot = await toursRef.where('deletedAt', '==', null).where("tourCompleted","==", true).get();
+  if (snapshot.empty) {
+    res.status(404).json({
+      name: "Not found",
+      message: "There are not existing tours"
+    })
+  }
+  else{
+    const list = snapshot.docs
+    let array = [];
+    list.map((element) =>{
+        array.push({id: element.id, ...element.data()})
+    })
+    res.status(200).json(array)
+  }
+});
+
+
 module.exports = router;
