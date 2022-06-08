@@ -185,6 +185,8 @@ router.put("/delete-tour/:idTour", async (req, res, next) => {
   }
 })
 
+
+/* UPDATE TOUR ----------------------------------------------- */
 router.put('/update-tour/:idTour', async (req, res, next) => {
   const { idTour } = req.params;
   const { body } = req;
@@ -225,19 +227,31 @@ router.put('/update-tour-operator/:idTourOperator', async (req, res, next) => {
     // Confirmamos que existe
     const tourOperatorRef = db.collection('TOUR_OPERATOR').doc(idTourOperator);
     const doc = await tourOperatorRef.get();
+
     if (!doc.exists) {
       return res.status(404).json({
         name: "Not found",
         message: "Sorry, el tour operador que buscas no existe"
       })
     } else {
-      // Actualiza el documento
+      // Actualiza el documento en TOUR OPERADOR
       const tour = await db.collection('TOUR_OPERATOR').doc(idTourOperator).update(body);
+
+      // Actualiza todos los documentos de los TOURS
+      const toursRef = db.collection("TOUR");
+      const snapshot = await toursRef.where('tourOperator', '==', idTourOperator).get();
+
+      snapshot.forEach((doc) => {
+        const tour = db.collection('TOUR').doc(doc.id).update({
+          tourOperatorCountry: req.body.country,
+          tourOperatorName: req.body.fullName,
+        });
+      })
 
       // Actualiza la fecha de actualización
       const updatedAt = await tourOperatorRef.update({
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
-      });
+      }); 
 
       return res.status(200).json({
         name: "Edicion exitosa",
