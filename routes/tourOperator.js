@@ -148,7 +148,7 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
       document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
       document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
       document.childrenPolicy !== undefined ? size += 1 : size;
-      document.cancellationPolicy !== undefined ? size += 2 : size;
+      document.cancellationPolicy !== undefined ? size += 1 : size;
       if(document.accessibility !== undefined){
         if(document.accessibility.assistance !== undefined){
           document.accessibility.assistance.map((value)=>{
@@ -192,8 +192,9 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
       }
       
       console.log("Final size", size)
-      const percentage = parseInt((size / 42) *100);
+      const percentage = parseInt((size / 41) *100);
 
+      console.log(percentage)
       const changePercentage = await tourRef.update({
         percentage: percentage
       });
