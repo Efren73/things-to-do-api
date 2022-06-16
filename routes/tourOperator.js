@@ -146,8 +146,23 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
 
       let size = 0;
       document = doc2.data()
-      document.basicInformation !== undefined ?  size += Object.keys(document.basicInformation).length : size;
-      document.intinerary !== undefined ?  size += Object.keys(document.intinerary).length : size;
+      if(document.basicInformation !== undefined){
+        size += Object.keys(document.basicInformation).length;
+        if(document.basicInformation.privateTour !== undefined){
+          size -= 1;
+        }
+
+        if(document.basicInformation.groupTour !== undefined){
+          size -= 1;
+        }
+      }
+      
+      if(document.intinerary !== undefined){
+        size += Object.keys(document.intinerary).length;
+        if(document.intinerary.stops !== undefined){
+          size -= 1;
+        }
+      }
       document.childrenPolicy !== undefined ? size += 1 : size;
       document.cancellationPolicy !== undefined ? size += 1 : size;
       if(document.accessibility !== undefined){
@@ -193,7 +208,7 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
       }
       
       console.log("Final size", size)
-      const percentage = parseInt((size / 41) *100);
+      const percentage = parseInt((size / 38) *100);
 
       console.log(percentage)
       const changePercentage = await tourRef.update({
