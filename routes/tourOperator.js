@@ -3,7 +3,7 @@ var router = express.Router();
 const admin = require ('firebase-admin')
 const db = require('../firebase')
 
-//Get tours of one tour operator
+//Get all tours of one tour operator
 router.get('/all-tours/:idTourOperator', async (req, res, next) => {
   const {idTourOperator} = req.params;
   const toursRef = db.collection("TOUR");
