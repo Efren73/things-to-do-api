@@ -156,6 +156,10 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
           size -= 1;
         }
       }
+
+      if(document.photos !== undefined){
+        size += 1;
+      }
       
       if(document.intinerary !== undefined){
         size += Object.keys(document.intinerary).length;
@@ -208,7 +212,7 @@ router.put('/update-tour/:idTour', async (req, res, next) => {
       }
       
       console.log("Final size", size)
-      const percentage = parseInt((size / 38) *100);
+      const percentage = parseInt((size / 39) *100);
 
       console.log(percentage)
       const changePercentage = await tourRef.update({
