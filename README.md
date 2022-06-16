@@ -2,7 +2,7 @@
 
 A microsite to send your experience/tour to wheel the world or if you are an Admin, check the tours.
 
-<p><img src = "https://github.com/Efren73/GoWheelTheWorld-Front/blob/Develop/WheelTheWorldGif.gif" /></p>
+<p><img src = "https://github.com/Efren73/things-to-do-api/blob/main/base%20foto.jpg" /></p>
 
 ## API ENDPOINTS 
 Link to download the documentation: [link](url)
