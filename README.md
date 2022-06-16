@@ -29,7 +29,7 @@ npm run dev
 Backend deployment: [Backend deploy](https://api-things-to-do.herokuapp.com/)
 
 ## Additional Links and Contributors
-Frontend repository: [Backend repository](https://github.com/Efren73/GoWheelTheWorld-Front.git)
+Frontend repository: [Frontend repository](https://github.com/Efren73/GoWheelTheWorld-Front.git)
 
 ### Contributors
 * Carlos Manuel González Vallejo
