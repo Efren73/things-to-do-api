@@ -5,7 +5,7 @@ A microsite to send your experience/tour to wheel the world or if you are an Adm
 <p><img src = "https://github.com/Efren73/things-to-do-api/blob/main/base%20foto.jpg" /></p>
 
 ## API ENDPOINTS 
-Link to download the documentation: [link](url)
+Link to download the documentation: [link](https://drive.google.com/file/d/1E546b9L4SLBFcn8gI7D3Meq3ijJEqXzO/view?usp=sharing)
 
 ## How to install our code in your computer?
 * Clone the repo 
